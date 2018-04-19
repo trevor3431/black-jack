@@ -28,20 +28,24 @@ class Blackjack
   def hit_stand
     puts "What would you like to do: \n\t1:> Hit\n\t2:> Stand"
     @response = gets.chomp.to_i
+      if @response == 1
+        new_card
+        "You are standing"
+      end
   end
 
   def new_card
-    if @response == 1
+  #  if @response == 1
       @hand.push(@cards.sample(1))
       20.times{print "="}
       print "\n"
       puts "Hand {#@hand}"
       hit_stand
-    elsif @response == 2
-      puts "You are standing"
-    else
-      puts "Invalid response please select 1 or 2"
-    end
+  #  elsif @response == 2
+  #    puts "You are standing"
+  #  else
+  #    puts "Invalid response please select 1 or 2"
+  #  end
   end
 
   def value
@@ -57,4 +61,3 @@ end
 p1 = Blackjack.new("Trevor")
 p1.hand
 p1.hit_stand
-p1.new_card
