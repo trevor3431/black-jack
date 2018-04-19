@@ -20,9 +20,9 @@ class Blackjack
       '3' => 3,
       '2' => 2
     }
-    @hand = Array.new
-    @hand = @cards.sample(2)
+    @hand = @cards.sample(1) + @cards.sample(1)
     print "Cards:> #{@hand}"
+    return @hand
   end
 
   def hit_stand
@@ -30,13 +30,17 @@ class Blackjack
     @response = gets.chomp.to_i
       if @response == 1
         new_card
-        "You are standing"
+      elsif @response == 2
+        puts  "You are standing"
+        puts "|||#{@hand}|||"
+        value
       end
   end
 
   def new_card
   #  if @response == 1
-      @hand.push(@cards.sample(1))
+      new_card = @cards.sample(1)
+      @hand << new_card
       20.times{print "="}
       print "\n"
       puts "Hand {#@hand}"
@@ -49,11 +53,9 @@ class Blackjack
   end
 
   def value
-    hand_value = Array.new
-    @hand.each do |x|
-      hand_value.push(@card_value[x])
-    end
-    puts hand_value
+    @hand.flatten! #need to flatten the array because multiple arrays are being created
+    puts "~~#{@hand}~~"
+    @hand.each {|x| puts @card_value[x]}
   end
 end
 
