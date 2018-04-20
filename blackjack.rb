@@ -1,10 +1,5 @@
 #blackjack
-
 class Blackjack
-  def initialize(name)
-    @name = name
-    hand
-  end
   def hand()
     @cards = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2']
     @card_value = {
@@ -23,9 +18,8 @@ class Blackjack
       '2' => 2
     }
     @hand = @cards.sample(2)
-    print "Cards:> #{@hand}"
-    hit_stand
-    end
+    puts "Cards:> #{@hand}"
+  end
 
   def hit_stand
     puts "What would you like to do: \n\t1:> Hit\n\t2:> Stand"
@@ -34,7 +28,10 @@ class Blackjack
         new_card
       elsif @response == 2
         puts  "You are standing"
-        puts "|||#{@hand}|||"
+        30.times{print "="}
+        puts "\n #{@hand}"
+        30.times{print "="}
+        print "\n"
         value
       end
   end
@@ -43,9 +40,9 @@ class Blackjack
       new_card = @cards.sample(1) #taken random card from cards
       @hand << new_card
       @hand.flatten! #flatten array from insertion of new card
-      20.times{print "="}
+      30.times{print "="}
       print "\n"
-      puts "Hand {#@hand}"
+      puts "Hand> {#@hand}"
       hit_stand
   end
 
@@ -54,10 +51,26 @@ class Blackjack
     hand_value = Array.new
     @hand.each {|x| hand_value << @card_value[x]}
     @score = hand_value.sum #score of players hand
-    puts @score
+    return @score
   end
+
+
 end
 
 
-p1 = Blackjack.new("Trevor")
-p2 = Blackjack.new("Player2")
+
+
+player = Blackjack.new
+dealer = Dealer.new
+player.hand
+dealer.hand
+player.hit_stand
+print "\nPlayer:> #{player.value}"
+puts "\nDealer:> #{dealer.value}\n\n"
+  if dealer.value > player.value && dealer.value <= 21 || player.value > 21
+    puts "<<<DEALER WINS>>>\n"
+  elsif dealer.value < player.value && player.value <= 21 || dealer.value > 21 && player.value < 21
+    puts "<<<PLAYER WINS>>>\n"
+  else
+    puts "Push"
+  end
