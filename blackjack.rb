@@ -50,9 +50,14 @@ class Blackjack
   def value
     #puts "~~#{@hand}~~" #only used for testing
     hand_value = Array.new
-    @hand.each {|x| hand_value << @card_value[x]}
-    @score = hand_value.sum #score of players hand
-    return @score
+    @hand.each {|x| hand_value << @card_value[x]} # insert value of each card into hand_value array
+    @score = hand_value.sum #score of players hand derived from card_value hash
+    if @hand.include?("A") && @score > 21
+      @score -= 10
+        return @score
+    else
+      return @score
+    end
   end
 end
 
@@ -91,35 +96,58 @@ class Dealer < Blackjack
       value
   end
 
-  def value
-    #puts "~~#{@hand}~~" #only used for testing
-    hand_value = Array.new
-    @hand.each {|x| hand_value << @card_value[x]} # insert value of each card into hand_value array
-    @score = hand_value.sum #score of players hand derived from card_value hash
-    return @score
-  end
+
 end
 
-
-player = Blackjack.new
-dealer = Dealer.new
-puts "Dealer"
-dealer.hand
-puts "Player"
-player.hand
-puts "Dealer"
-dealer.hit_stand
-print "\n"
-until dealer.value > 17 || player.value > 21
+class Engine
+@@player_score = 0
+@@dealer_score = 0
+  def play()
+  player = Blackjack.new
+  dealer = Dealer.new
+  puts "Dealer"
+  dealer.hand
+  puts "Player"
+  player.hand
+  puts "Dealer"
   dealer.new_card
-  dealer.value
-end
-print "\nPlayer:> #{player.value}"
-puts "\nDealer:> #{dealer.value}\n\n"
-  if dealer.value > player.value && dealer.value <= 21 || player.value > 21
-    puts "<<<DEALER WINS>>>\n"
-  elsif dealer.value < player.value && player.value <= 21 || dealer.value > 21 && player.value <= 21
-    puts "<<<PLAYER WINS>>>\n"
-  else
-    puts "Push"
+  dealer.hit_stand
+  print "\n"
+  until dealer.value > 17 || player.value > 21
+    dealer.new_card
+    dealer.value
   end
+  print "\nPlayer:> #{player.value}"
+  puts "\nDealer:> #{dealer.value}\n\n"
+    if dealer.value > player.value && dealer.value <= 21 || player.value > 21
+      puts "<<<DEALER WINS>>>\n"
+      puts "SCORE"
+      30.times{print "="}
+      @@dealer_score += 1
+      puts "\nPlayer: #{@@player_score} Dealer: #{@@dealer_score}"
+    elsif dealer.value < player.value && player.value <= 21 || dealer.value > 21 && player.value <= 21
+      puts "<<<PLAYER WINS>>>\n"
+      @@player_score += 1
+      puts "SCORE"
+      30.times{print "="}
+      puts "\nPlayer: #{@@player_score} Dealer: #{@@dealer_score}"
+    else
+      puts "Push"
+    end
+  return replay
+  end
+
+  def replay
+    puts "Would you like to play again?"
+    puts "1:> Yes 2:> No"
+    response = $stdin.gets.chomp
+    if response.upcase == "Y" || response.upcase == "YES" || response == '1'
+      return play
+    else
+      puts "Have a great day."
+    end
+  end
+end
+
+player = Engine.new
+player.play
