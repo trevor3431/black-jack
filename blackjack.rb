@@ -22,6 +22,8 @@ class Blackjack
     hit_stand
   end
 
+
+
   def hit_stand
     print "\nWhat would you like to do: \n\t1:> Hit\n\t2:> Stand\n > "
     @response = gets.chomp.to_i
@@ -62,6 +64,9 @@ class Blackjack
 end
 
 class Dealer < Blackjack
+  def initialize
+    @@chips = 500
+  end
   def hand()
     @cards = ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2']
     @card_value = {
@@ -100,41 +105,66 @@ class Dealer < Blackjack
 end
 
 class Engine
-@@player_score = 0
-@@dealer_score = 0
-  def play()
-  player = Blackjack.new
-  dealer = Dealer.new
-  puts "Dealer"
-  dealer.hand
-  puts "Player"
-  player.hand
-  puts "Dealer"
-  dealer.new_card
-  dealer.hit_stand
-  print "\n"
-  until dealer.value > 17 || player.value > 21
-    dealer.new_card
-    dealer.value
-  end
-  print "\nPlayer:> #{player.value}"
-  puts "\nDealer:> #{dealer.value}\n\n"
-    if dealer.value > player.value && dealer.value <= 21 || player.value > 21
-      puts "<<<DEALER WINS>>>\n"
-      puts "SCORE"
-      30.times{print "="}
-      @@dealer_score += 1
-      puts "\nPlayer: #{@@player_score} Dealer: #{@@dealer_score}"
-    elsif dealer.value < player.value && player.value <= 21 || dealer.value > 21 && player.value <= 21
-      puts "<<<PLAYER WINS>>>\n"
-      @@player_score += 1
-      puts "SCORE"
-      30.times{print "="}
-      puts "\nPlayer: #{@@player_score} Dealer: #{@@dealer_score}"
+  @@player_score = 0
+  @@dealer_score = 0
+  @@chips = 500
+  def wager
+    puts "You have $#{@@chips}"
+    puts "What would you like to wager?"
+    print ":> $ "
+    @@wager = $stdin.gets.chomp.to_i
+    if @@wager > @@chips
+      puts "You can't bet more than you have"
+      return wager
     else
-      puts "Push"
+      return @@wager
     end
-  return replay
+  end
+
+  def play()
+    player = Blackjack.new
+    wager
+    dealer = Dealer.new
+    puts "Dealer"
+    dealer.hand
+    puts "Player"
+    player.hand
+    puts "Dealer"
+    dealer.new_card
+    dealer.hit_stand
+    print "\n"
+    until dealer.value > 17 || player.value > 21
+      dealer.new_card
+      dealer.value
+    end
+    print "\nPlayer:> #{player.value}"
+    puts "\nDealer:> #{dealer.value}\n\n"
+      if dealer.value > player.value && dealer.value <= 21 || player.value > 21
+        puts "<<<DEALER WINS>>>\n"
+        @@chips -= @@wager
+        puts "You lost $#{@@wager}"
+        puts "Current balance /> $#{@@chips}"
+        puts "SCORE"
+        30.times{print "="}
+        @@dealer_score += 1
+        puts "\nPlayer: #{@@player_score} Dealer: #{@@dealer_score}"
+      elsif dealer.value < player.value && player.value <= 21 || dealer.value > 21 && player.value <= 21
+        puts "<<<PLAYER WINS>>>\n"
+        @@chips += @@wager
+        puts "You won $#{@@wager}"
+        puts "Current balance /> $#{@@chips}"
+        @@player_score += 1
+        puts "SCORE"
+        30.times{print "="}
+        puts "\nPlayer: #{@@player_score} Dealer: #{@@dealer_score}"
+      else
+        puts "Push"
+      end
+      if @@chips > 0
+        return replay
+      else
+        puts "You are out of chips.... GAME OVER"
+      end
   end
 
   def replay
